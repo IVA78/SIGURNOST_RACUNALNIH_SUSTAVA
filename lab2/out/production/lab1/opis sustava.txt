@@ -1,0 +1,30 @@
+Sigurnosni zahtjevi: 
+
+1. Povjerljivost zaporki: napadač ne može odrediti nikakve informacije o zaporkama, čak niti njihovu duljinu, čak ni jesu li zaporke za dvije adrese jednake, čak ni je li nova zaporka jednaka staroj kada se promijeni.
+
+2. Povjerljivost adresa: napadač ne može odrediti nikakve informacije o adresama, osim da zna koliko se različitih adresa nalazi u bazi. 
+
+3. Integritet adresa i zaporki: nije moguće da korisnik dobije od alata zaporku za određenu adresu, ako prethodno nije unio točno tu zaporku za točno tu adresu. Obratite pažnju na napad zamijene: napadač ne smije moći zamijeniti zaporku određene adrese zaporkom neke druge adrese. 
+
+
+Opis sustava:
+Pri inicijalizaciji baze za spremanje adresa i pripadajućih lozinki, najprije se kreira nova datoteka u koju će iste biti pohranjene. Funkcija u kojoj se inicijalizira bazu će kriptirati nasumično izgeneriran string (final varijabla) te isti spremiti u datoteku kao inicijalnu vrijednost pomoću koje će se provjeravati masterPassword. Za provođenje enkripcije najprije se izgenerira ključ korištenjem PBKDF2WithHmacSHA256 algoritma. Password-Based Key Derivation Function 2  derivira ključ pomoću masterPassworda. Glavna ideja je uvijek generirati različit ključ za svaku enkripciju: Ključ koji enkriptira nešto jedini može "to nešto" i dekriptirati. Nakon generiranja ključa pomoću masterPassworda, salta i IV-a, kriptira se inicijalni string koji se zajedno sa saltom i IV-jem sprema u tekstualnu datoteku kao listu čini elementi su bajtovi koji predstavljaju vrijednosti kriptiranog inicijalnog stringa, salt-a i IV-ja. 
+
+Salt i IV mogu biti poznate napadaču, pa ćemo koristiti tu činjenicu da možemo provjeravati masterPassword. Ukoliko unesemo točan masterPassword, uz isti salt i IV generirat ćemo isti ključ koji je kriptirao inicijalni string i samo taj ključ može dekriptirati inicijalni string. Korišteni princip poznat je pod nazivom "Zero knowledge proof": provjerit će se masterPassword bez njegovog spremanja i bez da se uopće zna kako glasi. 
+
+Opisana provjera masterPassworda provlači se i kroz ostale medote: put i get. Nakon uspješne provjere masterPassworda obavit će se zadana instrukcija, inače dobijamo poruku "Master password incorrect or integrity check failed.". Ukoliko korisnik zatraži lozinku za nepostojeću adresu dobit će istu poruku. Pri spremanju lozinke (naredba put) kriptira se par (adresa, lozinka) uz ključ koji je generiran na isti način kao prethodno opisani iznad. Napomena: salt i incijalizacijski vektor se uvijek nanovo generiraju pri svakoj enkripciji. Pri spremanju nove lozinke napravit će se provjera ukoliko već postoji lozinka za navedenu adresu. Ista će se ukloniti te će se spremiti ažuriran par kao što je već opisano. Za dohvat i dekripciju lozinke, generiramo ponovno ključ na osnovu masterrPassworda kojeg smo prethodno verificirali te koristimo prethodno spremljeni salt koji smo očitali. Na osnovu ključa i prethodno spremljenog IV-ja dekriptiramo par (adresa, lozinka) i dostavljamo traženu informaciju korisniku.
+
+Ostvarenost sigurnosnih zahtjeva:
+1. Korištenjem PBKDF2WithHmacSHA256 generira se ključ potreban za enkripciju, a pri kriptiranju koristila sam AES/CBC/PKCS5Padding algoritam. Na ovaj način neće biti pohranjena nikakva informacija o lozinkama, njihovoj duljini i sličnom: napadač ne može saznati ništa o adresama i lozinkama bez točnog ključa za dekripciju.
+
+2. Budući da su adrese spremljene u paru (adresa, lozinka) koji je zajedno kriptiran kao što je iznad opisano, napadač ne može dobiti nikakve informacije bez ključa. Alternativan način bio bi spremanje adresa odvojeno, ali njih bi i tada trebalo kriptirati drugim ključem. Na ovaj način napadač može znati koliko je podataka u bazi, ali ne može znati ništa o njima.
+
+3. Provjera masterPassworda na osnovu kojeg se kasnije generira i ključ da kriptiranje i dekriptiranje spriječit će napadača da neovlašteno mijenja podatke u bazi. Budući da su parovi (adresa, lozinka) zajedno kriptirani, napadač ne može neovisno promijeniti lozinku za određenu adresu.
+
+Dodatno o algoritmima:
+KLJUČ: PBKDF2 (Password-Based Key Derivation Function 2) je algoritam za derivaciju ključa iz lozinke. HMAC (Hash-based Message Authentication Code) je kriptografski algoritam koji koristi kriptografsku hash funkciju (u ovom slučaju SHA-256) za generiranje autentikacijskog koda. PBKDF2WithHmacSHA256 koristi HMAC s SHA-256 kao pseudoslučajnu funkciju za izvod ključa. Glavna svrha PBKDF2WithHmacSHA256 je otežati napadima brute force i rječnikom tako da generira ključ koji zahtijeva puno resursa za izračunavanje.
+ENKCIPCIJA/DEKRIPCIJA: AES (Advanced Encryption Standard) je simetrični algoritam šifriranja koji koristi ključ duljine 128, 192 ili 256 bitova. CBC (Cipher Block Chaining) je način rada simetričnog blokovskog šifriranja u kojem se svaki blok teksta otvorenog teksta XOR-ira s prethodno šifriranim blokom prije nego što se šifrira. Ovo osigurava neovisnost od prethodnih blokova i dodaje kriptografsku neodredivost. PKCS5Padding je metoda za dodavanje punjenja na podatke prije šifriranja kako bi se osiguralo da su poruke koje nisu blokovi podataka cjeloviti blokovi. Ovaj padding dodaje niz bajtova kako bi poruka bila podijeljena u blokove koji su potrebni za AES.
+
+PBKDF2WithHmacSHA256 osigurava da ključevi generirani iz lozinki budu otporni na napade, dok AES/CBC/PKCS5Padding osigurava povjerljivost podataka enkripcijom i dekripcijom.
+
+

@@ -1,0 +1,41 @@
+Pogram se standardno može pokrenuti u nekom od standardnih razvojnih okruženja ili u naredbenom retku pomoću naredbi:
+1) javac Main.class
+2) java Main
+
+Primjeri za demonstraciju funkcionalnosti
+
+1. Primjer za inicijalizaciju password managera:
+ $ ./tajnik init mAsterPasswrd  
+Password manager initialized.  
+
+2. Primjer pohrane lozinke:
+$ ./tajnik put mAsterPasswrd www.fer.hr neprobojnAsifrA  
+Stored password for www.fer.hr.  
+
+3. Primjer dohvata lozinke:
+$ ./tajnik get mAsterPasswrd www.fer.hr 
+Password for www.fer.hr is: neprobojnAsifrA. 
+
+4. Primjer dohvata lozinke pogrešnom glavnom lozinkom:
+$ ./tajnik get wrongPasswrd www.fer.hr  
+Master password incorrect or integrity check failed.
+
+5. Primjer dohvata lozinke za nepostojeću adresu:
+$ ./tajnik get pass www.nepostoji.hr
+Master password incorrect or integrity check failed.
+
+6. Primjer ažuriranja lozinke za adresu:
+$ ./tajnik put mAsterPasswrd www.fer.hr novaNeprobojnAsifrA
+Stored password for www.fer.hr. 
+
+7. Primjer ponovnog dohvaćanja užurirane lozinke:
+$ ./tajnik get mAsterPasswrd www.fer.hr 
+Password for www.fer.hr is: novaNeprobojnAsifrA.
+
+
+U programu su također obrađeni i slučajevi u kojima je unešena nepravilna naredba.
+Primjer unošenja nepravilne naredbe: korisnik nije unio lozinku
+$ ./tajnik put pass www.fer.hr
+The instruction is not valid!
+
+

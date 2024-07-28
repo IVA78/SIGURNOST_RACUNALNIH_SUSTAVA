@@ -1,0 +1,18 @@
+Pogram se standardno može pokrenuti u nekom od standardnih razvojnih okruženja ili u naredbenom retku pomoću naredbi:
+1) javac Main.class
+2) java Main
+
+1. Primjer za inicijalizaciju password managera:
+ $ ./tajnik init mAsterPasswrd  
+Password manager initialized.  
+
+2. Primjer pohrane lozinke:
+$ ./tajnik put mAsterPasswrd www.fer.hr neprobojnAsifrA  
+Stored password for www.fer.hr.  
+
+3. Primjer dohvata lozinke:
+$ ./tajnik get mAsterPasswrd www.fer.hr 
+Password for www.fer.hr is: neprobojnAsifrA. 
+
+$ ./tajnik get wrongPasswrd www.fer.hr  
+Master password incorrect or integrity check failed. 

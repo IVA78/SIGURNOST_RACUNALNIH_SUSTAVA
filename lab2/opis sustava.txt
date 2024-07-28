@@ -1,0 +1,33 @@
+Funkcionalni zahtjevi:
+ADMIN
+1. Dodavanje novog korisničkog imena (operacija add): DONE - ukoliko korisnik vec ne postoji, dodaje se ukoliko prodju svi testovi za lozinku (provjera sigurnosti i dvostrukog unosa)
+2. Promjenu lozinke postojećeg korisničkog imena (operacija passwd): DONE - ukoliko korisnik postoji, azurira se lozinka ukoliko prodju svi testovi za novu lozinku (provjera sigurnosti i dvostrukog unosa)
+3. Forsiranje promjene lozinke korisničkog imena (operacija forcepass): DONE - azuriranje boolean zastavice koja osigurava da tijekom sljedece prijave korisnik mora promijeniti lozinku
+4. Uklanjanje postojećeg korisničkog imena (operacija del): DONE
+**Osigurano je da korisnik ne moze promijeniti lozinku na onu koja je trenutno postavljena
+KORISNIK
+1. Upisivanje korisničkog imena i lozinke pri čemu lozinka ne smije biti vidljiva tijekom upisa: DONE - provjerava se datoteka sa korisnicima u kojoj je spremljen korisnik ukoliko postoji
+2. Forsiranje izmjene lozinke nakon uspješne prijave: DONE – ako je tako zatražio administrator: DONE - provjera zastavice i azuriranje lozinke
+3. Po uspješnoj prijavi, login pokreće neki proces: DONE - notepad.exe
+
+Sigurnosti zahtjevi
+Tajnost lozinki mora biti očuvana: u datoteku se sprema korisnicko ime, hash vrijednost lozinke koja osigurava njenu tajnost (one-way), salt i forcepass zastavica
+
+Opis sustava:
+Pri pokretanju programa, ukoliko vec nije stvorena, stvara se datoteka za pohranu podataka.
+Za spremanje korisnickih podataka za hashiranje lozinke korisi se PBKDF2WithHmacSHA256 funkcija. Glavna ideja je spremiti hashiranu lozinku, a onda kod nove prijave korisnika ponovno izracunati hash na temelju
+spremljenog salta i unesene lozinke: ako su hash vrijednosti iste - omogucujemo prijavu korisniku.
+PBKDF2 (Password-Based Key Derivation Function 2) je algoritam za derivaciju ključa iz lozinke.
+HMAC (Hash-based Message Authentication Code) je kriptografski algoritam koji koristi kriptografsku hash funkciju (u ovom slučaju SHA-256) za generiranje autentikacijskog koda.
+PBKDF2WithHmacSHA256 koristi HMAC s SHA-256 kao pseudoslučajnu funkciju za izvod ključa.
+Glavna svrha PBKDF2WithHmacSHA256 je otežati napadima brute force i rječnikom tako da generira ključ koji zahtijeva puno resursa za izračunavanje.
+
+Zastita lozinki:
+->lozinke su ispravno pohranjene
+->lozinke imaju odredjene kompleksnosti (barem jedan uppercase, jedan lowercase, jednu znamenku i jedan posebni znak, duljina bar 8 znakova)
+->Lozinke se cesto mijenjaju (kad god to admin zatrazi)
+->onemoguceno je pogadjanje lozinki (moguci unos lozinke je maksimalno 3 puta)
+->lozinke se ne mogu vidjeti preko unosa (skrivene su)
+
+
+

@@ -1,0 +1,79 @@
+Pogram se standardno može pokrenuti u nekom od standardnih razvojnih okruženja ili u naredbenom retku pomoću naredbi:
+1) javac PasswordsAuth.class
+2) java PasswordsAuth
+
+Primjeri za demonstraciju funkcionalnosti
+
+1.Neuspjesno dodavanje korisnika - admin
+$./usermgmt add sgros
+Password:
+Repeat Password:
+User add failed. Password mismatch.
+
+2.Uspjesno dodavanje korisnika - admin
+$./usermgmt add sgros
+Password:
+Repeat Password:
+User sgros successfuly added.
+
+3.Uspjesna prijava - korisnik
+$./login sgros
+Password:
+*process*
+
+
+4. Neuspjesna promjena lozinke - admin
+$./usermgmt passwd sgros
+Password:
+Repeat Password:
+Password change failed. Password mismatch.
+
+
+5. Uspjesna promjena lozinke - admin
+$./usermgmt passwd sgros
+Password:
+Repeat Password:
+Password change successful.
+
+6.Uspjesna prijava - korisnik
+$./login sgros
+Password:
+*process*
+
+
+7. Postavljanje zahtjeva za promjenom lozinke - admin
+$./usermgmt forcepass sgros
+User will be requested to change password on next login.
+
+
+8. Uspjesna prijava - korisnik
+$./login sgros
+Password:
+New password:
+Repeat new password:
+*process*
+
+9. Nuspjesna prijava korisnika - max 3 puta (krivi username ili password) -korisnik
+$./login sgros
+Password:
+Username or password incorrect.
+Password:
+Username or password incorrect.
+Password:
+Username or password incorrect.
+Login failed!
+
+10.Brisanje korisnika - admin
+$./usermgmt del sgros
+User successfuly removed.
+
+11.Neuspjesna prijava korisnika
+$./login sgros
+Password:
+Username or password incorrect.
+
+U programu su također obrađeni i slučajevi u kojima je unešena nepravilna naredba.
+Primjer unošenja nepravilne naredbe: korisnik nije unio korisnicko ime
+$./login
+
+
